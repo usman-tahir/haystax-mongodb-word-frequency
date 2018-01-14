@@ -12,5 +12,13 @@ class TrendingNode():
             return 1
         return 1 + self.next.length()
 
+    def concatenate(self, y):
+        current = self
+
+        while current.has_next():
+            current = current.next
+        current.next = y
+        return self
+
     def __str__(self):
         return "Data: %s\nHas Next: %s" % (self.data, str(self.has_next()))
