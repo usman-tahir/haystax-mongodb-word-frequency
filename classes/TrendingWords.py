@@ -9,6 +9,13 @@ class TrendingWords():
         counts = Counter(self.trending_words)
         return counts.most_common(1)[0] # return the first most trending word as a tuple
 
+    def format(self):
+        output = {
+            "timestamp": self.timestamp,
+            "trending_words": self.trending_words
+        }
+        return output
+
     def get_most_trending_count(self):
         return self.get_most_trending()[1]
     
