@@ -33,5 +33,11 @@ class TrendingNode():
             index += 1
         return current
 
+    def first(self):
+        return self.search()
+
+    def last(self):
+        return self.search(self.length())
+
     def __str__(self):
         return "Data: %s\nHas Next: %s" % (self.data, str(self.has_next()))
