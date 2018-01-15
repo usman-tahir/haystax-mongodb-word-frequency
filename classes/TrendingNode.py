@@ -20,5 +20,18 @@ class TrendingNode():
         current.next = y
         return self
 
+    def search(self, position = 1):
+        if position <= 0:
+            raise ValueError("An invalid position was entered - enter a position between 1 and %s, inclusive." % str(self.length()))
+        
+        current = self
+        index = 0
+
+        # account for an offset
+        while index < position - 1:
+            current = current.next
+            index += 1
+        return current
+
     def __str__(self):
         return "Data: %s\nHas Next: %s" % (self.data, str(self.has_next()))
