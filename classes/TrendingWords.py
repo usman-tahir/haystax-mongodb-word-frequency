@@ -1,5 +1,5 @@
 from collections import Counter
-
+import json
 class TrendingWords():
     def __init__(self, timestamp = "", trending_words = []):
         self.timestamp = timestamp
@@ -14,10 +14,10 @@ class TrendingWords():
             "timestamp": self.timestamp,
             "trending_words": self.trending_words
         }
-        return output
+        return json.dumpscl(output)
 
     def get_most_trending_count(self):
         return self.get_most_trending()[1]
     
     def __str__(self):
-        return "Timestamp: %s\nTrending words: %s" % (self.timestamp, str(self.trending_words))
+        return self.format()
