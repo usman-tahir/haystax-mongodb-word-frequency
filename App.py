@@ -45,28 +45,37 @@ def generate_day(trending_words_for_day):
     # print(day.last())
     return day
 
-def determine_overall_trending_word(days):
+def determine_daily_trending_word(day):
     # using an underscore in order to resolve any key/trending word issues
     overall_trending_word = {
         "_word": "",
         "_count": 0
     }
 
-    for day in days:
-        current = day
-        index = 1
-        while index <= current.length():
-            data = current.search(index).data
-            print(data.get_most_trending())
-            if overall_trending_word["_count"] <= data.get_most_trending_count():
-                new_overall_trending_word = {
-                    "_word": data.get_most_trending_word(),
-                    "_count": data.get_most_trending_count()
-                }
-                overall_trending_word = new_overall_trending_word
-            index += 1
-        print(overall_trending_word)
+    current = day
+    index = 1
+    while index <= current.length():
+        data = current.search(index).data
+        if overall_trending_word["_count"] <= data.get_most_trending_count():
+            new_overall_trending_word = {
+                "_word": data.get_most_trending_word(),
+                "_count": data.get_most_trending_count()
+            }
+        overall_trending_word = new_overall_trending_word
+        index += 1
     return overall_trending_word
+
+def determine_overall_trending_word(days):
+    overall_trending_word = {
+        "_word": "",
+        "_count": 0
+    }
+
+    for day in days:
+        overall_trending_word_for_day = determine_daily_trending_word(day)
+        if overall_trending_word_for_day["_count"] >= overall_trending_word["_count"]:
+            overall_trending_word = overall_trending_word_for_day
+    print(overall_trending_word)
 
 def main():
     mongo_data = retrieve_mongo_collection()
@@ -78,8 +87,7 @@ def main():
         trending_words = generate_trending_words_for_day(partitioned_data[x])
         day = generate_day(trending_words)
         formatted_days.append(day)
-    
-    overall_trending_word = determine_overall_trending_word(formatted_days)
+    determine_overall_trending_word(formatted_days)
 
 if __name__ == "__main__":
     main()
