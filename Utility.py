@@ -5,7 +5,6 @@ import sys
 from pymongo import MongoClient
 
 from classes.TrendingWords import *
-from classes.TrendingNode import *
 
 def read_words(filename):
     return [word.strip("\n") for word in open(filename, "r").readlines()]
@@ -22,13 +21,6 @@ def generate_trending_words_for_day(day_string, words):
         t = TrendingWords(timestamp, generate_trending_words(words))
         trending_words_data.append(str(t))
     return trending_words_data
-
-def generate_day(trending_words_for_day):
-    day = TrendingNode(trending_words_for_day[0])
-
-    for x in range(1, 24):
-        day.concatenate(TrendingNode(trending_words_for_day[x]))
-    return day
 
 def generate_data_for_insertion(data):
     with open("./data/frequencies.json", "w") as output:
