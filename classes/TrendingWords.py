@@ -18,6 +18,9 @@ class TrendingWords():
 
     def get_most_trending_count(self):
         return self.get_most_trending()[1]
+
+    def get_most_trending_word(self):
+        return self.get_most_trending()[0]
     
     def __str__(self):
         return self.format()
