@@ -14,7 +14,7 @@ class TrendingWords():
             "timestamp": self.timestamp,
             "trending_words": self.trending_words
         }
-        return json.dumpscl(output)
+        return json.dumps(output)
 
     def get_most_trending_count(self):
         return self.get_most_trending()[1]
