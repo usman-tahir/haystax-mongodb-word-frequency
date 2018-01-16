@@ -42,7 +42,31 @@ def generate_day(trending_words_for_day):
 
     for x in range(1, 24):
         day.concatenate(TrendingNode(trending_words_for_day[x]))
+    # print(day.last())
     return day
+
+def determine_overall_trending_word(days):
+    # using an underscore in order to resolve any key/trending word issues
+    overall_trending_word = {
+        "_word": "",
+        "_count": 0
+    }
+
+    for day in days:
+        current = day
+        index = 1
+        while index <= current.length():
+            data = current.search(index).data
+            print(data.get_most_trending())
+            if overall_trending_word["_count"] <= data.get_most_trending_count():
+                new_overall_trending_word = {
+                    "_word": data.get_most_trending_word(),
+                    "_count": data.get_most_trending_count()
+                }
+                overall_trending_word = new_overall_trending_word
+            index += 1
+        print(overall_trending_word)
+    return overall_trending_word
 
 def main():
     mongo_data = retrieve_mongo_collection()
@@ -55,7 +79,7 @@ def main():
         day = generate_day(trending_words)
         formatted_days.append(day)
     
-    print(formatted_days)
+    overall_trending_word = determine_overall_trending_word(formatted_days)
 
 if __name__ == "__main__":
     main()
