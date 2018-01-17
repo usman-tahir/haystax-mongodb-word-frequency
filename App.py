@@ -77,6 +77,28 @@ def determine_overall_trending_word(days):
             overall_trending_word = overall_trending_word_for_day
     print(overall_trending_word)
 
+# based on the past 24 hours
+def determine_recent_trending_word(days):
+    return determine_daily_trending_word(days[-1])
+
+def generate_trend_for_words(day):
+    word_trends = {}
+    current = day
+    index = 1
+
+    while index <= current.length():
+        current_data = current.search(index).data
+        current_trending_words_set = list(set(current_data.trending_words))
+        for word in current_trending_words_set:
+            word_count = current_data.trending_words.count(word)
+            if word in word_trends:
+                word_trends[word].append(word_count)
+            else:
+                word_trends[word] = []
+                word_trends[word].append(word_count)
+        index += 1
+    return word_trends
+
 def main():
     mongo_data = retrieve_mongo_collection()
     partitioned_data = partition_output(mongo_data)
@@ -87,7 +109,8 @@ def main():
         trending_words = generate_trending_words_for_day(partitioned_data[x])
         day = generate_day(trending_words)
         formatted_days.append(day)
-    determine_overall_trending_word(formatted_days)
+    # determine_overall_trending_word(formatted_days)
+    generate_trend_for_words(formatted_days[0])
 
 if __name__ == "__main__":
     main()
