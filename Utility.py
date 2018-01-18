@@ -28,7 +28,6 @@ def generate_data_for_insertion(data):
 
 def update_mongo_collection():
     word_frequency_data = [json.loads(data) for data in json.load(open("./data/frequencies.json"))]
-    print(word_frequency_data)
     connection = MongoClient(sys.argv[1])
     collection = connection.word_frequencies.word_frequencies
     collection.insert(word_frequency_data)

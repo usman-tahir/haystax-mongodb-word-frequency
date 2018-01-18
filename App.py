@@ -1,6 +1,7 @@
 import json
 import sys
 import collections
+import numpy
 
 from pymongo import MongoClient
 from classes.TrendingWords import *
@@ -75,7 +76,7 @@ def determine_overall_trending_word(days):
         overall_trending_word_for_day = determine_daily_trending_word(day)
         if overall_trending_word_for_day["_count"] >= overall_trending_word["_count"]:
             overall_trending_word = overall_trending_word_for_day
-    print(overall_trending_word)
+    return overall_trending_word
 
 # based on the past 24 hours
 def determine_recent_trending_word(days):
@@ -83,6 +84,7 @@ def determine_recent_trending_word(days):
 
 def generate_trend_for_words(day):
     word_trends = {}
+    linear_fit_trend = []
     current = day
     index = 1
 
@@ -97,7 +99,30 @@ def generate_trend_for_words(day):
                 word_trends[word] = []
                 word_trends[word].append(word_count)
         index += 1
-    return word_trends
+    for word in word_trends.keys():
+        linear_fit_trend.append(generate_linear_fit(word, word_trends[word]))
+
+    return linear_fit_trend
+
+def generate_linear_fit(word, data):
+    x = numpy.arange(0, len(data))
+    y = numpy.array(data)
+    z = numpy.polyfit(x, y, 1)
+    return (word, z[1])
+
+def determine_most_trending_word(days):
+    word_trends = []
+
+    word_trends.append(generate_trend_for_words(days[1]))
+    word_trends.append(generate_trend_for_words(days[2]))
+    word_trends = sum(word_trends, [])
+    word_trends.sort(key = lambda t: t[1])
+    return word_trends[-1][0]
+
+def generate_results(days):
+    print("The word that occurs most frequently in the entire data set: %s" % determine_overall_trending_word(days)["_word"])
+    print("The word that occurs most frequently in the last 24 hours: %s" % determine_recent_trending_word(days)["_word"])
+    print("The word that is trending the most: %s" % determine_most_trending_word(days))
 
 def main():
     mongo_data = retrieve_mongo_collection()
@@ -109,8 +134,8 @@ def main():
         trending_words = generate_trending_words_for_day(partitioned_data[x])
         day = generate_day(trending_words)
         formatted_days.append(day)
-    # determine_overall_trending_word(formatted_days)
-    generate_trend_for_words(formatted_days[0])
+    
+    generate_results(formatted_days)
 
 if __name__ == "__main__":
     main()
